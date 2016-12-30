@@ -8,10 +8,10 @@
     "routing",
     "router"
   ],
-  "homepage": "http://millermedeiros.github.com/crossroads.js/",
-  "version": "0.12.2",
+  "homepage": "https://github.com/MyUNiDAYS/crossroads.js",
+  "version": "0.13.0",
   "author": {
-    "name": "Miller Medeiros",
+    "name": "Andrew Bullock, Miller Medeiros",
     "url": "http://blog.millermedeiros.com/"
   },
   "repository": {

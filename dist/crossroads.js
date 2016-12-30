@@ -1,7 +1,7 @@
 /** @license
- * crossroads <http://millermedeiros.github.com/crossroads.js/>
- * Author: Miller Medeiros | MIT License
- * v0.12.2 (2015/07/31 18:37)
+ * crossroads <https://github.com/MyUNiDAYS/crossroads.js>
+ * Author: Andrew Bullock, Miller Medeiros | MIT License
+ * v0.13.0 (2016/12/30 16:03)
  */
 
 (function () {
@@ -286,7 +286,7 @@ var factory = function (signals) {
 
     //"static" instance
     crossroads = new Crossroads();
-    crossroads.VERSION = '0.12.2';
+    crossroads.VERSION = '0.13.0';
 
     crossroads.NORM_AS_ARRAY = function (req, vals) {
         return [vals.vals_];
@@ -404,7 +404,10 @@ var factory = function (signals) {
                 val = values[n];
                 if (this._paramsIds) {
                     param = this._paramsIds[n];
-                    if (param.indexOf('?') === 0 && val) {
+                    if (param.indexOf('?') === 0) {
+                        if(val === undefined)
+                            val = '';
+
                         //make a copy of the original string so array and
                         //RegExp validation can be applied properly
                         o[param +'_'] = val;

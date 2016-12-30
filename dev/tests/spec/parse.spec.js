@@ -971,14 +971,14 @@ describe('crossroads.parse()', function(){
                 crossroads.parse('bar.php');
 
                 expect( t3 ).toEqual( 'bar.php' );
-                expect( t4 ).toBeUndefined();
+                expect( t4 ).toEqual( {} );
             });
         });
 
         describe('optional query string after optional segment', function () {
             it('should parse query string into an object and typecast vals', function () {
                 crossroads.shouldTypecast = true;
-
+                
                 var r = crossroads.addRoute(':a::?b:');
                 var t1, t2;
                 r.matched.addOnce(function(a, b){
@@ -998,7 +998,7 @@ describe('crossroads.parse()', function(){
                 crossroads.parse('bar.php');
 
                 expect( t3 ).toEqual( 'bar.php' );
-                expect( t4 ).toBeUndefined();
+                expect( t4 ).toEqual( {} );
             });
         });
 

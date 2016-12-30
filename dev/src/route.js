@@ -106,7 +106,10 @@
                 val = values[n];
                 if (this._paramsIds) {
                     param = this._paramsIds[n];
-                    if (param.indexOf('?') === 0 && val) {
+                    if (param.indexOf('?') === 0) {
+                        if(val === undefined)
+                            val = '';
+
                         //make a copy of the original string so array and
                         //RegExp validation can be applied properly
                         o[param +'_'] = val;
