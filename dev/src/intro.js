@@ -78,7 +78,7 @@
         return result;
     }
 
-    // borrowed from MOUT
+    // borrowed from MOUT, modified by UNiDAYS
     function decodeQueryString(queryStr, shouldTypecast) {
         var queryArr = (queryStr || '').replace('?', '').split('&'),
             reg = /([^=]+)=(.+)/,
@@ -88,8 +88,13 @@
 
         while ((cur = queryArr[++i])) {
             equalIndex = cur.indexOf('=');
-            pName = cur.substring(0, equalIndex);
-            pValue = decodeURIComponent(cur.substring(equalIndex + 1));
+            if(equalIndex === -1){
+                pName = cur;
+                pValue = null;
+            } else {
+                pName = cur.substring(0, equalIndex);
+                pValue = decodeURIComponent(cur.substring(equalIndex + 1));
+            }
             if (shouldTypecast !== false) {
                 pValue = typecastValue(pValue);
             }
