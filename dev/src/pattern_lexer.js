@@ -208,14 +208,13 @@
                     return val;
                 };
 
-            if (! TOKENS.OS.trail) {
-                TOKENS.OS.trail = new RegExp('(?:'+ TOKENS.OS.id +')+$');
-            }
-
+            if (! TOKENS.OS.trail)
+                TOKENS.OS.trail = new RegExp('(?:'+ TOKENS.OS.id +')+(\\?|$)');
+            
             return pattern
                         .replace(TOKENS.OS.rgx, TOKENS.OS.save)
                         .replace(PARAMS_REGEXP, replaceFn)
-                        .replace(TOKENS.OS.trail, '') // remove trailing
+                        .replace(TOKENS.OS.trail, '$1') // remove trailing
                         .replace(TOKENS.OS.rRestore, '/'); // add slash between segments
         }
 

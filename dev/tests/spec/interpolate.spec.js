@@ -12,6 +12,13 @@ describe('Route.interpolate()', function(){
         crossroads.resetState();
         crossroads.removeAllRoutes();
     });
+	
+    it('should replace regular segments and optional segments with query string', function(){
+        var a = crossroads.addRoute('/{foo}/:bar:/:baz:/:?params:');
+        expect( a.interpolate({foo: 'lorem', bar: 'ipsum'}) ).toEqual( '/lorem/ipsum' );
+        expect( a.interpolate({foo: 'dolor-sit'}) ).toEqual( '/dolor-sit' );
+        expect( a.interpolate({foo: 'dolor-sit', params: { bosh: '678'}}) ).toEqual( '/dolor-sit?bosh=678' );
+    });
 
     it('should ignore optional segments', function(){
         var a = crossroads.addRoute('/foo/:bar:');
@@ -25,6 +32,7 @@ describe('Route.interpolate()', function(){
         expect( a.interpolate({foo: 'lorem', bar: 'ipsum'}) ).toEqual( '/lorem/ipsum' );
         expect( a.interpolate({foo: 'dolor-sit'}) ).toEqual( '/dolor-sit' );
     });
+
 
     it('should allow number as segment (#gh-54)', function(){
         var a = crossroads.addRoute('/{foo}/:bar:');
@@ -80,9 +88,9 @@ describe('Route.interpolate()', function(){
 
     it('should replace query segments', function(){
         var a = crossroads.addRoute('/{foo}/:?query:');
-        expect( a.interpolate({foo: 'lorem', query: {some: 'test'}}) ).toEqual( '/lorem/?some=test' );
-        expect( a.interpolate({foo: 'dolor-sit', query: {multiple: 'params', works: 'fine'}}) ).toEqual( '/dolor-sit/?multiple=params&works=fine' );
-        expect( a.interpolate({foo: 'amet', query: {multiple: ['paramsWith', 'sameName'], works: 'fine2'}}) ).toEqual( '/amet/?multiple=paramsWith&multiple=sameName&works=fine2' );
-        expect( a.interpolate({foo: 'amet2', query: {"multiple[]": ['paramsWith', 'sameName'], works: 'fine2'}}) ).toEqual( '/amet2/?multiple[]=paramsWith&multiple[]=sameName&works=fine2' );
+        expect( a.interpolate({foo: 'lorem', query: {some: 'test'}}) ).toEqual( '/lorem?some=test' );
+        expect( a.interpolate({foo: 'dolor-sit', query: {multiple: 'params', works: 'fine'}}) ).toEqual( '/dolor-sit?multiple=params&works=fine' );
+        expect( a.interpolate({foo: 'amet', query: {multiple: ['paramsWith', 'sameName'], works: 'fine2'}}) ).toEqual( '/amet?multiple=paramsWith&multiple=sameName&works=fine2' );
+        expect( a.interpolate({foo: 'amet2', query: {"multiple[]": ['paramsWith', 'sameName'], works: 'fine2'}}) ).toEqual( '/amet2?multiple[]=paramsWith&multiple[]=sameName&works=fine2' );
     });
 });
