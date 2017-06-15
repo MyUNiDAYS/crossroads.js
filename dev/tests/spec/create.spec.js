@@ -16,47 +16,36 @@ describe('crossroads.create()', function(){
     describe('new Router instance', function(){
 
         it('should work in new instances', function(){
-            var t1;
             var cr = crossroads.create();
 
-            cr.addRoute('/{foo}', function(foo){
-                t1 = foo;
-            });
-            cr.parse('/lorem_ipsum');
+            cr.addRoute('/{foo}');
+            var parse1 = cr.parse('/lorem_ipsum');
 
-            expect( t1 ).toBe( 'lorem_ipsum' );
+            expect( parse1.params[0] ).toBe( 'lorem_ipsum' );
         });
 
 
         it('shouldn\'t affect static instance', function(){
-            var t1;
             var cr = crossroads.create();
 
-            cr.addRoute('/{foo}', function(foo){
-                t1 = foo;
-            });
-            crossroads.addRoute('/{foo}', function(foo){
-                t1 = 'error!';
-            });
-            cr.parse('/lorem_ipsum');
+            var a = cr.addRoute('/{foo}');
+            var b = crossroads.addRoute('/{foo}');
+            
+			var t1 = cr.parse('/lorem_ipsum');
 
-            expect( t1 ).toBe( 'lorem_ipsum' );
+            expect( t1.route ).toBe( a );
         });
 
 
         it('shouldn\'t be affected by static instance', function(){
-            var t1;
             var cr = crossroads.create();
 
-            crossroads.addRoute('/{foo}', function(foo){
-                t1 = foo;
-            });
-            cr.addRoute('/{foo}', function(foo){
-                t1 = 'error!';
-            });
-            crossroads.parse('/lorem_ipsum');
+            var a = crossroads.addRoute('/{foo}');
+            var b = cr.addRoute('/{foo}');
+			
+            var parse1 = crossroads.parse('/lorem_ipsum');
 
-            expect( t1 ).toBe( 'lorem_ipsum' );
+            expect( parse1.route ).toBe( a );
         });
 
 
@@ -83,10 +72,14 @@ describe('crossroads.create()', function(){
                 vals[1] = b;
                 count++;
             };
+			
             cr.addRoute('test', inc);
-            cr.parse('foo-bar');
-            expect( count ).toEqual( 1 );
-            expect( vals ).toEqual( [123, 456] );
+            
+			var parse1 = cr.parse('foo-bar');
+            
+            expect( parse1.params[0] ).toEqual( 123 );
+            expect( parse1.params[1] ).toEqual( 456 );
+			
             expect( cr.patternLexer ).not.toBe( crossroads.patternLexer );
         });
 
