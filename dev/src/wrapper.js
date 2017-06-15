@@ -1,6 +1,6 @@
 //::LICENSE:://
 (function () {
-var factory = function (signals) {
+var factory = function () {
 //::INTRO_JS:://
 //::CROSSROADS_JS:://
 //::ROUTE_JS:://

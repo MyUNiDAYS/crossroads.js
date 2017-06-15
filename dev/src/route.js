@@ -5,25 +5,19 @@
     /**
      * @constructor
      */
-    function Route(pattern, callback, priority, router) {
+    function Route(pattern, data, priority, router) {
         var isRegexPattern = isRegExp(pattern),
             patternLexer = router.patternLexer;
         this._router = router;
+        this.data = data;
         this._pattern = pattern;
         this._paramsIds = isRegexPattern? null : patternLexer.getParamIds(pattern);
         this._optionalParamsIds = isRegexPattern? null : patternLexer.getOptionalParamsIds(pattern);
         this._matchRegexp = isRegexPattern? pattern : patternLexer.compilePattern(pattern, router.ignoreCase);
-        this.matched = new signals.Signal();
-        this.switched = new signals.Signal();
-        if (callback) {
-            this.matched.add(callback);
-        }
         this._priority = priority || 0;
     }
 
     Route.prototype = {
-
-        greedy : false,
 
         rules : void(0),
 
@@ -160,13 +154,11 @@
         },
 
         _destroy : function () {
-            this.matched.dispose();
-            this.switched.dispose();
-            this.matched = this.switched = this._pattern = this._matchRegexp = null;
+            this._pattern = this._matchRegexp = null;
         },
 
         toString : function () {
-            return '[Route pattern:"'+ this._pattern +'", numListeners:'+ this.matched.getNumListeners() +']';
+            return '[Route pattern:"'+ this._pattern +']';
         }
 
     };

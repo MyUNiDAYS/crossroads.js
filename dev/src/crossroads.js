@@ -6,40 +6,23 @@
      * @constructor
      */
     function Crossroads() {
-        this.bypassed = new signals.Signal();
-        this.routed = new signals.Signal();
         this._routes = [];
-        this._prevRoutes = [];
-        this._piped = [];
-        this.resetState();
     }
 
     Crossroads.prototype = {
 
-        greedy : false,
-
-        greedyEnabled : true,
-
         ignoreCase : true,
-
-        ignoreState : false,
 
         shouldTypecast : false,
 
         normalizeFn : null,
 
-        resetState : function(){
-            this._prevRoutes.length = 0;
-            this._prevMatchedRequest = null;
-            this._prevBypassedRequest = null;
-        },
-
         create : function () {
             return new Crossroads();
         },
 
-        addRoute : function (pattern, callback, priority) {
-            var route = new Route(pattern, callback, priority, this);
+        addRoute : function (pattern, data, priority) {
+            var route = new Route(pattern, data, priority, this);
             this._sortedInsert(route);
             return route;
         },
@@ -57,70 +40,8 @@
             this._routes.length = 0;
         },
 
-        parse : function (request, defaultArgs) {
-            request = request || '';
-            defaultArgs = defaultArgs || [];
-
-            // should only care about different requests if ignoreState isn't true
-            if ( !this.ignoreState &&
-                (request === this._prevMatchedRequest ||
-                 request === this._prevBypassedRequest) ) {
-                return;
-            }
-
-            var routes = this._getMatchedRoutes(request),
-                i = 0,
-                n = routes.length,
-                cur;
-
-            if (n) {
-                this._prevMatchedRequest = request;
-
-                this._notifyPrevRoutes(routes, request);
-                this._prevRoutes = routes;
-                //should be incremental loop, execute routes in order
-                while (i < n) {
-                    cur = routes[i];
-                    cur.route.matched.dispatch.apply(cur.route.matched, defaultArgs.concat(cur.params));
-                    cur.isFirst = !i;
-                    this.routed.dispatch.apply(this.routed, defaultArgs.concat([request, cur]));
-                    i += 1;
-                }
-            } else {
-                this._prevBypassedRequest = request;
-                this.bypassed.dispatch.apply(this.bypassed, defaultArgs.concat([request]));
-            }
-
-            this._pipeParse(request, defaultArgs);
-        },
-
-        _notifyPrevRoutes : function(matchedRoutes, request) {
-            var i = 0, prev;
-            while (prev = this._prevRoutes[i++]) {
-                //check if switched exist since route may be disposed
-                if(prev.route.switched && this._didSwitch(prev.route, matchedRoutes)) {
-                    prev.route.switched.dispatch(request);
-                }
-            }
-        },
-
-        _didSwitch : function (route, matchedRoutes){
-            var matched,
-                i = 0;
-            while (matched = matchedRoutes[i++]) {
-                // only dispatch switched if it is going to a different route
-                if (matched.route === route) {
-                    return false;
-                }
-            }
-            return true;
-        },
-
-        _pipeParse : function(request, defaultArgs) {
-            var i = 0, route;
-            while (route = this._piped[i++]) {
-                route.parse(request, defaultArgs);
-            }
+        parse : function (request) {
+            return this._getMatchedRoute(request);
         },
 
         getNumRoutes : function () {
@@ -135,32 +56,20 @@
             routes.splice(n+1, 0, route);
         },
 
-        _getMatchedRoutes : function (request) {
-            var res = [],
-                routes = this._routes,
+        _getMatchedRoute : function (request) {
+            var routes = this._routes,
                 n = routes.length,
                 route;
             //should be decrement loop since higher priorities are added at the end of array
             while (route = routes[--n]) {
-                if ((!res.length || this.greedy || route.greedy) && route.match(request)) {
-                    res.push({
+                if (route.match(request)) {
+                    return {
                         route : route,
                         params : route._getParamsArray(request)
-                    });
-                }
-                if (!this.greedyEnabled && res.length) {
-                    break;
+                    };
                 }
             }
-            return res;
-        },
-
-        pipe : function (otherRouter) {
-            this._piped.push(otherRouter);
-        },
-
-        unpipe : function (otherRouter) {
-            arrayRemove(this._piped, otherRouter);
+            return null;
         },
 
         toString : function () {

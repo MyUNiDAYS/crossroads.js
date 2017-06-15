@@ -9,7 +9,6 @@ var crossroads = crossroads || require('../../../dist/crossroads');
 describe('Route.interpolate()', function(){
 
     afterEach(function(){
-        crossroads.resetState();
         crossroads.removeAllRoutes();
     });
 	

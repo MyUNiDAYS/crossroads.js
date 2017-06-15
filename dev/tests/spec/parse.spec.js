@@ -15,10 +15,7 @@ describe('crossroads.parse()', function(){
 
 
     afterEach(function(){
-        crossroads.resetState();
         crossroads.removeAllRoutes();
-        crossroads.routed.removeAll();
-        crossroads.bypassed.removeAll();
         crossroads.shouldTypecast = _prevTypecast;
     });
 
@@ -60,100 +57,53 @@ describe('crossroads.parse()', function(){
         });
 
         it('should dispatch matched signal', function(){
-            var t1, t2, t3;
-
             var a = crossroads.addRoute('/{foo}');
-            a.matched.add(function(foo){
-                t1 = foo;
-            });
-
             var b = crossroads.addRoute('/{foo}/{bar}');
-            b.matched.add(function(foo, bar){
-                t2 = foo;
-                t3 = bar;
-            });
 
-            crossroads.parse('/lorem_ipsum');
-            crossroads.parse('/maecennas/ullamcor');
+            var t1 = crossroads.parse('/lorem_ipsum');
+            var t2 = crossroads.parse('/maecennas/ullamcor');
 
-            expect( t1 ).toBe( 'lorem_ipsum' );
-            expect( t2 ).toBe( 'maecennas' );
-            expect( t3 ).toBe( 'ullamcor' );
+            expect( t1.params[0] ).toBe( 'lorem_ipsum' );
+            expect( t2.params[0] ).toBe( 'maecennas' );
+            expect( t2.params[1] ).toBe( 'ullamcor' );
         });
 
         it('should handle a word separator that isn\'t necessarily /', function(){
-            var t1, t2, t3, t4;
 
             var a = crossroads.addRoute('/{foo}_{bar}');
-            a.matched.add(function(foo, bar){
-                t1 = foo;
-                t2 = bar;
-            });
-
             var b = crossroads.addRoute('/{foo}-{bar}');
-            b.matched.add(function(foo, bar){
-                t3 = foo;
-                t4 = bar;
-            });
+            
+            var t1 = crossroads.parse('/lorem_ipsum');
+            var t2 =crossroads.parse('/maecennas-ullamcor');
 
-            crossroads.parse('/lorem_ipsum');
-            crossroads.parse('/maecennas-ullamcor');
-
-            expect( t1 ).toBe( 'lorem' );
-            expect( t2 ).toBe( 'ipsum' );
-            expect( t3 ).toBe( 'maecennas' );
-            expect( t4 ).toBe( 'ullamcor' );
+            expect( t1.params[0] ).toBe( 'lorem' );
+            expect( t1.params[1] ).toBe( 'ipsum' );
+            expect( t2.params[0] ).toBe( 'maecennas' );
+            expect( t2.params[1] ).toBe( 'ullamcor' );
         });
 
         it('should handle empty routes', function(){
-            var calls = 0;
-
             var a = crossroads.addRoute();
-            a.matched.add(function(foo, bar){
-                expect( foo ).toBeUndefined();
-                expect( bar ).toBeUndefined();
-                calls++;
-            });
 
-            crossroads.parse('/123/456');
-            crossroads.parse('/maecennas/ullamcor');
-            crossroads.parse('');
+            var t1 = crossroads.parse('/123/456');
+            var t2 = crossroads.parse('/maecennas/ullamcor');
+            var t3 = crossroads.parse('');
 
-            expect( calls ).toBe( 1 );
+            expect( t1 ).toBeNull();
+            expect( t2 ).toBeNull();
+            expect( t3 ).toBeDefined();
         });
 
         it('should handle empty strings', function(){
-            var calls = 0;
-
             var a = crossroads.addRoute('');
-            a.matched.add(function(foo, bar){
-                expect( foo ).toBeUndefined();
-                expect( bar ).toBeUndefined();
-                calls++;
-            });
 
-            crossroads.parse('/123/456');
-            crossroads.parse('/maecennas/ullamcor');
-            crossroads.parse('');
+            var t1 = crossroads.parse('/123/456');
+            var t2 = crossroads.parse('/maecennas/ullamcor');
+            var t3 = crossroads.parse('');
 
-            expect( calls ).toBe( 1 );
-        });
-
-        it('should route `null` as empty string', function(){
-            var calls = 0;
-
-            var a = crossroads.addRoute('');
-            a.matched.add(function(foo, bar){
-                expect( foo ).toBeUndefined();
-                expect( bar ).toBeUndefined();
-                calls++;
-            });
-
-            crossroads.parse('/123/456');
-            crossroads.parse('/maecennas/ullamcor');
-            crossroads.parse();
-
-            expect( calls ).toBe( 1 );
+            expect( t1 ).toBeNull();
+            expect( t2 ).toBeNull();
+            expect( t3 ).toBeDefined();
         });
     });
 
@@ -162,35 +112,25 @@ describe('crossroads.parse()', function(){
     describe('optional params', function(){
 
         it('should capture optional params', function(){
-            var calls = 0;
+            crossroads.addRoute('foo/:lorem:/:ipsum:/:dolor:/:sit:');
 
-            var a = crossroads.addRoute('foo/:lorem:/:ipsum:/:dolor:/:sit:');
-            a.matched.add(function(a, b, c, d){
-                expect( a ).toBe( 'lorem' );
-                expect( b ).toBe( '123' );
-                expect( c ).toBe( 'true' );
-                expect( d ).toBe( 'false' );
-                calls++;
-            });
-
-            crossroads.parse('foo/lorem/123/true/false');
-
-            expect( calls ).toBe( 1 );
+            var t1 = crossroads.parse('foo/lorem/123/true/false');
+            expect( t1.params[0] ).toBe( 'lorem' );
+            expect( t1.params[1] ).toBe( '123' );
+            expect( t1.params[2] ).toBe( 'true' );
+            expect( t1.params[3] ).toBe( 'false' );
         });
 
         it('should only pass matched params', function(){
             var calls = 0;
 
-            var a = crossroads.addRoute('foo/:lorem:/:ipsum:/:dolor:/:sit:');
-            a.matched.add(function(a, b, c, d){
-                expect( a ).toBe( 'lorem' );
-                expect( b ).toBe( '123' );
-                expect( c ).toBeUndefined();
-                expect( d ).toBeUndefined();
-                calls++;
-            });
+            crossroads.addRoute('foo/:lorem:/:ipsum:/:dolor:/:sit:');
+            var t1 = crossroads.parse('foo/lorem/123');
 
-            crossroads.parse('foo/lorem/123');
+            expect( t1.params[0] ).toBe( 'lorem' );
+            expect( t1.params[1] ).toBe( '123' );
+            expect( t1.params[2] ).toBeUndefined();
+            expect( t1.params[3] ).toBeUndefined();
 
             expect( calls ).toBe( 1 );
         });
@@ -202,34 +142,22 @@ describe('crossroads.parse()', function(){
     describe('regex route', function(){
 
         it('should capture groups', function(){
-            var calls = 0;
+            crossroads.addRoute(/^\/[0-9]+\/([0-9]+)$/); //capturing groups becomes params
 
-            var a = crossroads.addRoute(/^\/[0-9]+\/([0-9]+)$/); //capturing groups becomes params
-            a.matched.add(function(foo, bar){
-                expect( foo ).toBe( '456' );
-                expect( bar ).toBeUndefined();
-                calls++;
-            });
+            var t1 = crossroads.parse('/123/456');
+            expect( t1.params[0] ).toBe( '456' );
+            expect( t1.params[1] ).toBeUndefined();
 
-            crossroads.parse('/123/456');
-            crossroads.parse('/maecennas/ullamcor');
-
-            expect( calls ).toBe( 1 );
+            var t2 = crossroads.parse('/maecennas/ullamcor');
+            expect( t2 ).toBeNull();
         });
 
         it('should capture even empty groups', function(){
-            var calls = 0;
+            crossroads.addRoute(/^\/()\/([0-9]+)$/); //capturing groups becomes params
 
-            var a = crossroads.addRoute(/^\/()\/([0-9]+)$/); //capturing groups becomes params
-            a.matched.add(function(foo, bar){
-                expect( foo ).toBe( '' );
-                expect( bar ).toBe( '456' );
-                calls++;
-            });
-
-            crossroads.parse('//456');
-
-            expect( calls ).toBe( 1 );
+            var t1 = crossroads.parse('//456');
+            expect( t1.params[0] ).toBe( '' );
+            expect( t1.params[1] ).toBe( '456' );
         });
     });
 

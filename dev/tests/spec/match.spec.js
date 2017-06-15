@@ -17,7 +17,6 @@ describe('Match', function(){
 
     afterEach(function(){
         crossroads.removeAllRoutes();
-        crossroads.resetState();
         crossroads.shouldTypecast = _prevTypecast;
         crossroads.ignoreCase = _prevCase;
     });

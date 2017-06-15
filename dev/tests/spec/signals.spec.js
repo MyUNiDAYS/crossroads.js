@@ -9,7 +9,6 @@ var crossroads = crossroads || require('../../../dist/crossroads');
 describe('crossroads Signals', function(){
 
     afterEach(function(){
-        crossroads.resetState();
         crossroads.removeAllRoutes();
         crossroads.bypassed.removeAll();
         crossroads.routed.removeAll();
@@ -164,13 +163,9 @@ describe('crossroads Signals', function(){
         crossroads.parse('/lorem/ipsum'); // bypass
         crossroads.parse('/foo_bar'); // match
 
-        crossroads.resetState();
-
         crossroads.parse('/foo_bar'); // routed/matched
         crossroads.parse('/lorem_ipsum'); // match
         crossroads.parse('/dolor'); // bypass
-
-        crossroads.resetState();
 
         crossroads.parse('/dolor'); // bypass
 

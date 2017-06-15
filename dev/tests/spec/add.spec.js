@@ -12,12 +12,10 @@ describe('crossroads.addRoute()', function(){
         // added we need to make sure other tests won't mess up these results
         // otherwise we might spend time trying to debug the wrong issues
         crossroads.removeAllRoutes();
-        crossroads.resetState();
     });
 
     afterEach(function(){
         crossroads.removeAllRoutes();
-        crossroads.resetState();
     });
 
 
@@ -28,7 +26,6 @@ describe('crossroads.addRoute()', function(){
         expect( s ).toBeDefined();
         expect( s.rules ).toBeUndefined();
         expect( crossroads.getNumRoutes() ).toBe( 1 );
-        expect( s.matched.getNumListeners() ).toBe( 0 );
 
     });
 
@@ -41,7 +38,6 @@ describe('crossroads.addRoute()', function(){
         expect( s ).toBeDefined();
         expect( s.rules ).toBeUndefined();
         expect( crossroads.getNumRoutes() ).toBe( 1 );
-        expect( s.matched.getNumListeners() ).toBe( 1 );
 
     });
 
@@ -54,7 +50,6 @@ describe('crossroads.addRoute()', function(){
         expect( s ).toBeDefined();
         expect( s.rules ).toBeUndefined();
         expect( crossroads.getNumRoutes() ).toBe( 1 );
-        expect( s.matched.getNumListeners() ).toBe( 1 );
 
     });
 
@@ -73,8 +68,6 @@ describe('crossroads.addRoute()', function(){
         expect( s1.rules ).toBeUndefined();
         expect( s2.rules ).toBeUndefined();
         expect( crossroads.getNumRoutes() ).toBe( 2 );
-        expect( s1.matched.getNumListeners() ).toBe( 1 );
-        expect( s2.matched.getNumListeners() ).toBe( 1 );
 
     });
 
@@ -90,8 +83,6 @@ describe('crossroads.addRoute()', function(){
         expect( s2.rules ).toBeUndefined();
         expect( crossroads.getNumRoutes() ).toBe( 1 );
         expect( cr.getNumRoutes() ).toBe( 1 );
-        expect( s1.matched.getNumListeners() ).toBe( 0 );
-        expect( s2.matched.getNumListeners() ).toBe( 0 );
 
     });
 

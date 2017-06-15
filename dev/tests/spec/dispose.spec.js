@@ -9,7 +9,6 @@ var crossroads = crossroads || require('../../../dist/crossroads');
 describe('Route.dispose()', function(){
 
     afterEach(function(){
-        crossroads.resetState();
         crossroads.removeAllRoutes();
     });
 
