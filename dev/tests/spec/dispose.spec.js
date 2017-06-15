@@ -17,14 +17,12 @@ describe('Route.dispose()', function(){
         var count = 0;
 
         var a = crossroads.addRoute('{foo}/{bar}');
-        a.matched.add(function(foo, bar){
-            count++;
-        });
 
-        crossroads.parse('foo/bar');
+        var parse1 = crossroads.parse('foo/bar');
         a.dispose();
-        crossroads.parse('dolor/amet');
-        expect( count ).toBe( 1 );
+		
+        var parse2 = crossroads.parse('dolor/amet');
+        expect( parse2 ).toBeNull();
     });
 
 });
