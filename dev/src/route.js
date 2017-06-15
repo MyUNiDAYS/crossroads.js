@@ -158,7 +158,7 @@
         },
 
         toString : function () {
-            return '[Route pattern:"'+ this._pattern +']';
+            return '[Route pattern:"'+ this._pattern +'"]';
         }
 
     };
