@@ -25,13 +25,13 @@ describe('crossroads.parse()', function(){
 
     describe('simple string route', function(){
 
-        it('shold route basic strings', function(){
+        it('should route basic strings', function(){
 
             crossroads.addRoute('/foo');
 			
-            expect( crossroads.parse('/bar') ).toBeDefined();
+            expect( crossroads.parse('/bar') ).toBeNull();
             expect( crossroads.parse('/foo') ).toBeDefined();
-			expect( crossroads.parse('foo') ).toBeNull();
+			expect( crossroads.parse('foo') ).toBeDefined();
 			
         });
 
@@ -402,7 +402,7 @@ describe('crossroads.parse()', function(){
             var parse3 = crossroads.parse('lorem-123');
 			expect( parse3.params[0] ).toBe( 'lorem' );
 			expect( parse3.params[1] ).toBe( '123' );
-			expect( parse2.route ).toBe( a );
+			expect( parse3.route ).toBe( a );
             
 			expect( crossroads.parse('lorem-555') ).toBeNull();
 

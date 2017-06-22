@@ -1,7 +1,7 @@
 /** @license
  * crossroads <https://github.com/MyUNiDAYS/crossroads.js>
  * Author: Andrew Bullock, Miller Medeiros | MIT License
- * v0.13.0 (2016/12/31 10:08)
+ * v0.13.0 (2017/06/22 10:57)
  */
 
 (function () {
@@ -86,7 +86,7 @@ var factory = function () {
         return result;
     }
 
-    // borrowed from MOUT
+    // borrowed from MOUT, modified by UNiDAYS
     function decodeQueryString(queryStr, shouldTypecast) {
         var queryArr = (queryStr || '').replace('?', '').split('&'),
             reg = /([^=]+)=(.+)/,
@@ -96,8 +96,13 @@ var factory = function () {
 
         while ((cur = queryArr[++i])) {
             equalIndex = cur.indexOf('=');
-            pName = cur.substring(0, equalIndex);
-            pValue = decodeURIComponent(cur.substring(equalIndex + 1));
+            if(equalIndex === -1){
+                pName = cur;
+                pValue = null;
+            } else {
+                pName = cur.substring(0, equalIndex);
+                pValue = decodeURIComponent(cur.substring(equalIndex + 1));
+            }
             if (shouldTypecast !== false) {
                 pValue = typecastValue(pValue);
             }
@@ -365,7 +370,7 @@ var factory = function () {
         },
 
         toString : function () {
-            return '[Route pattern:"'+ this._pattern +']';
+            return '[Route pattern:"'+ this._pattern +'"]';
         }
 
     };
@@ -581,14 +586,13 @@ var factory = function () {
                     return val;
                 };
 
-            if (! TOKENS.OS.trail) {
-                TOKENS.OS.trail = new RegExp('(?:'+ TOKENS.OS.id +')+$');
-            }
-
+            if (! TOKENS.OS.trail)
+                TOKENS.OS.trail = new RegExp('(?:'+ TOKENS.OS.id +')+(\\?|$)');
+            
             return pattern
                         .replace(TOKENS.OS.rgx, TOKENS.OS.save)
                         .replace(PARAMS_REGEXP, replaceFn)
-                        .replace(TOKENS.OS.trail, '') // remove trailing
+                        .replace(TOKENS.OS.trail, '$1') // remove trailing
                         .replace(TOKENS.OS.rRestore, '/'); // add slash between segments
         }
 
