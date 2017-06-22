@@ -1,4 +1,12 @@
-[![Build Status](https://secure.travis-ci.org/millermedeiros/crossroads.js.svg)](https://travis-ci.org/millermedeiros/crossroads.js)
+## Differences in this fork ##
+
+The primary difference between this fork and the original is the removal of Signal.js and the associated matched and bypassed events.
+
+Calling `router.parse()` now either returns an object representing the successful routing, or null in the case of a failed route.
+
+Only one (the first) route will ever be matched.
+
+Additionally, an arbitrary data object can be specified when configuring the route, which gets returned on the result of calling `parse()`.
 
 ---
 
@@ -15,20 +23,11 @@ If used properly it can reduce code complexity by decoupling objects and also by
 See [project page](http://millermedeiros.github.com/crossroads.js/) for documentation and more details.
 
 
-
-
 ## Links ##
 
  - [Project page and documentation](http://millermedeiros.github.com/crossroads.js/)
  - [Usage examples](https://github.com/millermedeiros/crossroads.js/wiki/Examples)
  - [Changelog](https://github.com/millermedeiros/crossroads.js/blob/master/CHANGELOG.md)
-
-
-
-## Dependencies ##
-
-**This library requires [JS-Signals](http://millermedeiros.github.com/js-signals/) to work.**
-
 
 
 ## License ##
